@@ -1,0 +1,354 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mon miroir intérieur — Les soins de lumière d'Aurore</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Great+Vibes&display=swap');
+
+:root {
+  --ivoire:#F5EDE1;
+  --clair:#FBF6EE;
+  --brun:#4A3022;
+  --cuivre:#A87443;
+  --or:#E6C79A;
+}
+* { box-sizing:border-box; }
+body {
+  margin:0;
+  background:var(--ivoire);
+  color:var(--brun);
+  font-family:Georgia,serif;
+}
+main {
+  max-width:570px;
+  margin:24px auto;
+  padding:32px 24px;
+  min-height:85vh;
+  background:var(--clair);
+  border:1px solid #DCC9B3;
+  border-radius:22px;
+  box-shadow:0 12px 35px #4a302211;
+  text-align:center;
+}
+h1,h2 {
+  font-family:'Cormorant Garamond',serif;
+  font-weight:600;
+}
+h1 {font-size:49px;margin:18px 0;}
+h2 {font-size:35px;line-height:1.12;}
+.script {
+  font-family:'Great Vibes',cursive;
+  color:var(--cuivre);
+  font-size:36px;
+}
+p {font-size:16px;line-height:1.8;}
+.star {color:var(--cuivre);font-size:28px;}
+button {
+  cursor:pointer;
+  font-family:Georgia,serif;
+  font-size:15px;
+}
+.primary {
+  background:var(--brun);
+  color:var(--or);
+  border:0;
+  padding:16px 25px;
+  border-radius:30px;
+  margin-top:20px;
+  width:100%;
+  max-width:340px;
+}
+.primary:disabled {opacity:.45;cursor:not-allowed;}
+.option {
+  display:block;
+  width:100%;
+  padding:17px;
+  margin:12px 0;
+  background:white;
+  color:var(--brun);
+  border:1px solid #DCC9B3;
+  border-radius:13px;
+  text-align:left;
+  line-height:1.5;
+}
+.option.selected {
+  background:#EFE2D2;
+  border:2px solid var(--cuivre);
+}
+.progress {
+  height:5px;
+  background:#E6D7C6;
+  border-radius:20px;
+  overflow:hidden;
+  margin:24px 0;
+}
+.progress div {
+  height:100%;
+  background:var(--cuivre);
+  transition:width .3s;
+}
+.small {font-size:13px;color:#796455;}
+.result {
+  background:#F0E4D5;
+  padding:22px;
+  border-radius:15px;
+  text-align:left;
+  margin:20px 0;
+}
+.result h3 {
+  font-family:'Cormorant Garamond',serif;
+  font-size:26px;
+}
+footer {
+  margin-top:35px;
+  font-size:11px;
+  line-height:1.8;
+  color:#8B7464;
+}
+[hidden] {display:none!important;}
+</style>
+</head>
+<body>
+<main>
+<div class="star">✧ ✦ ✧</div>
+
+<section id="accueil">
+  <div class="script">Un instant pour toi</div>
+  <h1>Mon miroir intérieur</h1>
+  <p>
+    Et si, pendant quelques minutes,
+    tu laissais de côté toutes les questions
+    qui tournent dans ta tête ?
+  </p>
+  <p>
+    Je t'invite à explorer ce que tu ressens
+    aujourd'hui, à travers cinq questions.
+  </p>
+  <p>
+    Il n'y a aucune bonne réponse.
+    Seulement la tienne.
+  </p>
+  <button class="primary" onclick="commencer()">
+    J'ouvre mon miroir ✧
+  </button>
+</section>
+
+<section id="quiz" hidden>
+  <p class="small" id="numero"></p>
+  <div class="progress"><div id="barre"></div></div>
+  <h2 id="question"></h2>
+  <div id="options"></div>
+  <button id="suivant" class="primary" onclick="continuer()" disabled>
+    Continuer ✧
+  </button>
+</section>
+
+<section id="fin" hidden>
+  <div class="script">Ce que ton miroir te révèle</div>
+  <h2 id="titreResultat"></h2>
+  <p id="description"></p>
+
+  <div class="result">
+    <h3>Une question pour toi</h3>
+    <p id="reflexion"></p>
+    <h3>Ton petit pas du jour</h3>
+    <p id="action"></p>
+  </div>
+
+  <p>
+    Ce miroir est une invitation à t'écouter.
+    Tu peux y revenir chaque fois que
+    tu en ressens le besoin.
+  </p>
+
+  <button class="primary" onclick="sauvegarder()">
+    Conserver mon miroir
+  </button>
+  <button class="primary" onclick="recommencer()">
+    Recommencer
+  </button>
+
+  <p class="small">
+    Si tu souhaites explorer ton monde intérieur
+    plus en profondeur, tu peux découvrir
+    l'ÂmeOscope, ma cartographie intuitive
+    de ton paysage intérieur.
+  </p>
+</section>
+
+<footer>
+  Les soins de lumière d'Aurore<br>
+  Une création imaginée avec douceur ✧
+</footer>
+</main>
+
+<script>
+const questions = [
+ {
+  texte:"En ce moment, qu'est-ce qui prend le plus de place en toi ?",
+  choix:[
+   ["Mes pensées qui tournent sans arrêt","clarte"],
+   ["Cette fatigue que j'ai du mal à expliquer","repos"],
+   ["Des émotions que je garde pour moi","ecoute"]
+  ]
+ },
+ {
+  texte:"Quand tu as un moment rien que pour toi, que se passe-t-il ?",
+  choix:[
+   ["Je réfléchis à tout ce que je dois faire","clarte"],
+   ["J'aimerais juste ne rien avoir à gérer","repos"],
+   ["Je ne sais plus vraiment ce dont j'ai envie","ecoute"]
+  ]
+ },
+ {
+  texte:"Quelle phrase te ressemble le plus aujourd'hui ?",
+  choix:[
+   ["J'aimerais comprendre où j'en suis","clarte"],
+   ["J'aimerais pouvoir souffler un peu","repos"],
+   ["J'aimerais me retrouver","ecoute"]
+  ]
+ },
+ {
+  texte:"Qu'est-ce qui te ferait du bien maintenant ?",
+  choix:[
+   ["Y voir plus clair dans mes choix","clarte"],
+   ["M'accorder une vraie pause","repos"],
+   ["Mettre des mots sur ce que je ressens","ecoute"]
+  ]
+ },
+ {
+  texte:"Si tu pouvais t'offrir une seule chose cette semaine ?",
+  choix:[
+   ["Un moment pour remettre de l'ordre dans mes idées","clarte"],
+   ["Du temps sans obligation","repos"],
+   ["Un moment pour m'écouter vraiment","ecoute"]
+  ]
+ }
+];
+
+const resultats = {
+ clarte:{
+  titre:"Ton besoin de clarté",
+  description:"Tes réponses semblent montrer que tu as beaucoup de choses en tête. Peut-être que tu essaies de tout comprendre en même temps, alors que certaines réponses ont simplement besoin d'un peu d'espace pour émerger.",
+  reflexion:"Quelle est la question qui revient le plus souvent dans mes pensées ?",
+  action:"Prends cinq minutes pour écrire cette question, puis note ce que tu sais déjà, ce que tu ignores et ce qui dépend réellement de toi."
+ },
+ repos:{
+  titre:"Ton besoin de souffler",
+  description:"Tes réponses évoquent un besoin de ralentir. Tu as peut-être l'habitude de continuer, de gérer, de penser à tout. Aujourd'hui, tu peux aussi te demander ce qui te permettrait de retrouver un peu d'espace.",
+  reflexion:"Qu'est-ce que je continue à porter alors que j'aurais besoin d'une pause ?",
+  action:"Choisis une petite obligation que tu peux reporter, déléguer ou simplifier cette semaine."
+ },
+ ecoute:{
+  titre:"Ton besoin de te retrouver",
+  description:"Tes réponses suggèrent une envie de te reconnecter à ce que tu ressens vraiment. Quand on passe beaucoup de temps à répondre aux attentes du quotidien, ses propres besoins peuvent devenir moins faciles à entendre.",
+  reflexion:"Si je n'avais personne à satisfaire aujourd'hui, de quoi aurais-je envie ?",
+  action:"Accorde-toi dix minutes pour faire quelque chose qui te plaît, simplement parce que tu en as envie."
+ }
+};
+
+let index=0;
+let reponses=[];
+let resultatFinal=null;
+
+function afficher(id) {
+ document.querySelectorAll("main section").forEach(
+  section=>section.hidden=true
+ );
+ document.getElementById(id).hidden=false;
+}
+
+function commencer(){
+ index=0;
+ reponses=[];
+ afficher("quiz");
+ afficherQuestion();
+}
+
+function afficherQuestion(){
+ const q=questions[index];
+ document.getElementById("numero").textContent=
+  "Question "+(index+1)+" sur "+questions.length;
+ document.getElementById("barre").style.width=
+  ((index+1)/questions.length*100)+"%";
+ document.getElementById("question").textContent=q.texte;
+ const zone=document.getElementById("options");
+ zone.innerHTML="";
+ document.getElementById("suivant").disabled=true;
+
+ q.choix.forEach(([texte,valeur])=>{
+  const bouton=document.createElement("button");
+  bouton.className="option";
+  bouton.textContent=texte;
+  bouton.onclick=()=>{
+   reponses[index]=valeur;
+   document.querySelectorAll(".option").forEach(
+    b=>b.classList.remove("selected")
+   );
+   bouton.classList.add("selected");
+   document.getElementById("suivant").disabled=false;
+  };
+  zone.appendChild(bouton);
+ });
+}
+
+function continuer(){
+ if(!reponses[index])return;
+ index++;
+ if(index<questions.length){
+  afficherQuestion();
+ }else{
+  afficherResultat();
+ }
+}
+
+function afficherResultat(){
+ const scores={clarte:0,repos:0,ecoute:0};
+ reponses.forEach(r=>scores[r]++);
+ const ordre=["clarte","repos","ecoute"];
+ const gagnant=ordre.reduce((a,b)=>
+  scores[b]>scores[a]?b:a
+ );
+ resultatFinal=resultats[gagnant];
+
+ document.getElementById("titreResultat").textContent=
+  resultatFinal.titre;
+ document.getElementById("description").textContent=
+  resultatFinal.description;
+ document.getElementById("reflexion").textContent=
+  resultatFinal.reflexion;
+ document.getElementById("action").textContent=
+  resultatFinal.action;
+ afficher("fin");
+}
+
+function sauvegarder(){
+ if(!resultatFinal)return;
+ const texte=
+  "MON MIROIR INTÉRIEUR\n\n"+
+  resultatFinal.titre+"\n\n"+
+  resultatFinal.description+"\n\n"+
+  "Ma question :\n"+resultatFinal.reflexion+"\n\n"+
+  "Mon petit pas :\n"+resultatFinal.action+"\n\n"+
+  "Les soins de lumière d'Aurore";
+
+ const fichier=new Blob([texte],{type:"text/plain;charset=utf-8"});
+ const url=URL.createObjectURL(fichier);
+ const lien=document.createElement("a");
+ lien.href=url;
+ lien.download="mon-miroir-interieur.txt";
+ document.body.appendChild(lien);
+ lien.click();
+ lien.remove();
+ setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+
+function recommencer(){
+ commencer();
+}
+</script>
+</body>
+</html>
